@@ -12,7 +12,7 @@
 library(MendelianRandomization)
 
 ## Specify the working directory.
-setwd("H:/MR on Sepsis/MR on Sepsis - Github")
+setwd("H:/.../Sepsis MR")
 
 ## Load the GWAS data for the various traits.
 bmi <- read.delim("bmi_i.csv", header = TRUE, sep = ",")
@@ -27,7 +27,7 @@ hunt <- read.delim("Sepsis Data from HUNT.txt", header = TRUE, sep = " ")
 
 ############################################################
 
-## First, we run the analysis using the UK Biobank data.
+## First, we run the analysis using UK Biobank data.
 
 ##########   UKBB - PRE-PROCESS THE DATA   ##########
 
@@ -142,7 +142,7 @@ sepsis.ukbb.t2d <- sepsis.ukbb.t2d2
 rm(sepsis.ukbb.t2d2)
 
 
-## Sanity check. Confirms that  that data are aligned.
+## Sanity check. Confirms that data are aligned.
 all(as.character(sepsis.ukbb.bmi$SNP) == as.character(bmi1$SNP)); all(as.character(sepsis.ukbb.bmi$ALLELE1) == as.character(bmi1$bmi_ea))
 all(as.character(sepsis.ukbb.ldl$SNP) == as.character(ldl1$SNP)); all(as.character(sepsis.ukbb.ldl$ALLELE1) == as.character(ldl1$ldl_ea))
 all(as.character(sepsis.ukbb.sbp$SNP) == as.character(sbp1$SNP)); all(as.character(sepsis.ukbb.sbp$ALLELE1) == as.character(sbp1$sbp_ea))
@@ -154,7 +154,8 @@ all(as.character(sepsis.ukbb.t2d$SNP) == as.character(t2dm1$SNP)); all(as.charac
 ##########   UKBB - MR ANALYSIS   ##########
 
 ## We use functions from the R package MendelianRandomization.
-## We use IVW, MR-Egger, mode, median and the contamination mixture.
+## We implement the following MR methods:
+## IVW, MR-Egger, mode, median and the contamination mixture.
 
 ## Note: mr_allmethods performs IVW using a random-effects model
 ## by default when using more than 3 SNPs, which is what we want.
@@ -193,9 +194,9 @@ t2d1.conmix <- mr_conmix( mr_input(bx = t2dm1$t2dm_beta, bxse = t2dm1$t2dm_se, b
 
 ##########   UKBB - RESULTS TABLES   ##########
 
-## This explicitly reports results per method per trait.
-## We report both MR estimates and (exponentiated) 
-## results in an odds-ratio scale.
+## This creates results tables for all methods per trait.
+## We report both default MR estimates (log-odds ratios)
+## and results in an odds-ratio scale (exponentiated).
 
 
 ## Label the methods.
@@ -263,7 +264,7 @@ t2d1.results
 
 ###############################################
 
-## Now we run the analysis using the HUNT data.
+## Now we run the analysis using HUNT data.
 
 ##########   HUNT - PRE-PROCESS THE DATA   ##########
 
@@ -290,7 +291,7 @@ t2dm2 <- t2dm2[order(as.character(t2dm2$SNP)), ]; sepsis.hunt.t2d <- sepsis.hunt
 
 
 
-## Sanity check. Same number of SNPs per traits - no manual adjustments needed.
+## Sanity check. Same number of SNPs per trait - no manual adjustments needed.
 nrow(bmi2) == nrow(sepsis.hunt.bmi)
 nrow(ldl2) == nrow(sepsis.hunt.ldl)
 nrow(sbp2) == nrow(sepsis.hunt.sbp)
@@ -302,7 +303,7 @@ nrow(t2dm2) == nrow(sepsis.hunt.t2d)
 ## Align the reference alleles across datasets.
 
 ## Note: we are aligning according to the effect allele in the exposure GWAS 
-## so data for UKBB and hunt should be alinged in the same way.
+## so data for UKBB and HUNT should be alinged in the same way.
 
 ## For BMI.
 sepsis.hunt.bmi2 <- sepsis.hunt.bmi
@@ -369,7 +370,7 @@ for (i in 1:nrow(t2dm2)) {
 sepsis.hunt.t2d <- sepsis.hunt.t2d2
 rm(sepsis.hunt.t2d2)
 
-## Confirm that data are aligned.
+## Sanity check. Confirm that data are aligned.
 all(as.character(sepsis.hunt.bmi$SNP) == as.character(bmi2$SNP)); all(as.character(sepsis.hunt.bmi$EA) == as.character(bmi2$bmi_ea))
 all(as.character(sepsis.hunt.ldl$SNP) == as.character(ldl2$SNP)); all(as.character(sepsis.hunt.ldl$EA) == as.character(ldl2$ldl_ea))
 all(as.character(sepsis.hunt.sbp$SNP) == as.character(sbp2$SNP)); all(as.character(sepsis.hunt.sbp$EA) == as.character(sbp2$sbp_ea))
@@ -380,7 +381,7 @@ all(as.character(sepsis.hunt.t2d$SNP) == as.character(t2dm2$SNP)); all(as.charac
 
 ##########   HUNT - MR ANALYSIS   ##########
 
-## Note: mr_ivw does random-effects by default when using more than 3 SNPs.
+## Same as for the UKBB data.
 
 ## BMI.
 bmi2.main <- mr_allmethods( mr_input(bx = bmi2$bmi_beta, bxse = bmi2$bmi_se, by = sepsis.hunt.bmi$Beta, byse = sepsis.hunt.bmi$SE), method = "main" )
@@ -416,7 +417,7 @@ t2d2.conmix <- mr_conmix( mr_input(bx = t2dm2$t2dm_beta, bxse = t2dm2$t2dm_se, b
 
 ##########   HUNT - RESULTS TABLES   ##########
 
-## Again, we report both MR estimates and odds ratios.
+## Again, we report both default MR estimates and odds ratios.
 
 
 ## Name the methods.
@@ -486,10 +487,8 @@ t2d2.results
 
 ## Now create figures for the manuscript.
 
-## We use the ".tiff" format as required by the 
-## journal (and "lzw" compression to save space).
-## We plot point estimates and 95\% CI per method 
-## and report numerical values next to each plot.
+## We use the ".tiff" format for the figures (and "lzw" compression to save space).
+## We plot point estimates and 95% CI and report numerical values next to each plot.
 
 ###############################################
 
@@ -727,6 +726,7 @@ dev.off()
 
 ################################################
 
+## Those were the days, my friend... ##
 
 ################################################
 ################################################
