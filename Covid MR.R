@@ -12,7 +12,7 @@
 library(MendelianRandomization)
 
 ## Specify the working directory.
-setwd("H:/MR on Sepsis/MR on Sepsis - Github")
+setwd("H:/.../Sepsis MR")
 
 ## Load the GWAS data for the various traits.
 bmi <- read.delim("bmi_i.csv", header = TRUE, sep = ",")
@@ -261,6 +261,8 @@ t2d3.results
 
 ## Plot random-effects IVW estimates for UKBB and HUNT.
 
+## We use a logarithmic scale for the x-axis.
+
 ## UK Biobank data.
 ivw.means3 <- exp(rev(c(bmi3.main$Values[3, 2], ldl3.main$Values[3, 2], sbp3.main$Values[3, 2], smk3.main$Values[3, 2], t2d3.main$Values[3, 2])))
 ivw.ci13 <- exp(rev(c(bmi3.main$Values[3, 4], ldl3.main$Values[3, 4], sbp3.main$Values[3, 4], smk3.main$Values[3, 4], t2d3.main$Values[3, 4])))
@@ -366,7 +368,7 @@ dev.off()
 ##########   FIGURE 3   ##########
 
 ## Multivariate MR analysis of lipid traits 
-## and sepsis risk. This analysis was run by 
+## and covid-19 risk. This analysis was run by 
 ## Dipender Gill. Here we only plot the results.
 
 ## Here are the results from Dipender's analysis.
